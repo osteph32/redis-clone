@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <chrono>
+#include <mutex>
 
 class Database {
 public:
@@ -14,6 +15,8 @@ private:
     std::unordered_map<std::string, std::string> store;
 
     std::unordered_map<std::string, std::chrono::system_clock::time_point> expirations;
+    
+    std::mutex db_mutex;
 
     void saveToDisk();
     void loadFromDisk();

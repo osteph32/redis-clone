@@ -25,6 +25,8 @@ bool Database::isExpired(const std::string& key) {
 }
 
 std::string Database::execute(const Command& cmd) {
+    std::lock_guard<std::mutex> lock(db_mutex);
+
     switch (cmd.type) {
         case CommandType::SET: {
             store[cmd.args[0]] = cmd.args[1];
