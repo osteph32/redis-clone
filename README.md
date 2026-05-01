@@ -6,8 +6,9 @@ Redis is an open source in-memory key value database which is widely used in app
 
 ## Demo
 
-<!-- Add demo GIF below -->
-![Redis Clone Demo](assets/demo.gif)
+<p align="center">
+  <img src="assets/demo.gif" alt="Redis Clone Demo" width="850"/>
+</p>
 
 ---
 
