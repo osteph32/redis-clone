@@ -10,4 +10,6 @@ public:
 private:
     int port;
     Database db;
+
+    void handleClient(int client_socket);
 };

@@ -6,26 +6,12 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <cstring>
+#include <thread>
 
 Server::Server(int port) : port(port) {}
 
-void Server::start() {
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-    sockaddr_in address{};
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port);
-
-    bind(server_fd, (struct sockaddr*)&address, sizeof(address));
-    listen(server_fd, 3);
-
-    std::cout << "Server listening on port " << port << std::endl;
-
-    int addrlen = sizeof(address);
-    int client_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-
-    char buffer[1024] = {0};
+void Server::handleClient(int client_socket) {
+    char buffer[1024];
 
     while (true) {
         memset(buffer, 0, sizeof(buffer));
@@ -49,5 +35,38 @@ void Server::start() {
     }
 
     close(client_socket);
+}
+
+void Server::start() {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+    sockaddr_in address{};
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(port);
+
+    bind(server_fd, (struct sockaddr*)&address, sizeof(address));
+    listen(server_fd, 3);
+
+    std::cout << "Server listening on port " << port << std::endl;
+
+    while (true) {
+        int addrlen = sizeof(address);
+
+        int client_socket = accept(
+            server_fd,
+            (struct sockaddr*)&address,
+            (socklen_t*)&addrlen
+        );
+
+        std::thread client_thread(
+            &Server::handleClient,
+            this,
+            client_socket
+        );
+
+        client_thread.detach();
+    }
+
     close(server_fd);
 }
