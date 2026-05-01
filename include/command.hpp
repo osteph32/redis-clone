@@ -8,6 +8,9 @@ enum class CommandType {
     GET,
     DEL,
     EXPIRE,
+    EXISTS,
+    KEYS,
+    PING,
     INVALID
 };
 

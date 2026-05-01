@@ -63,6 +63,25 @@ std::string Database::execute(const Command& cmd) {
             return "OK\n";
         }
 
+        case CommandType::EXISTS: {
+            if (isExpired(cmd.args[0])) {
+                return "0\n";
+            }
+            return store.count(cmd.args[0]) ? "1\n" : "0\n";
+        }
+
+        case CommandType::KEYS: {
+            std::string result;
+            for (const auto& pair : store) {
+                result += pair.first + "\n";
+            }   
+            return result.empty() ? "(empty)\n" : result;
+        }
+
+        case CommandType::PING: {
+            return "PONG\n";
+        }
+
         default:
             return "ERROR\n";
     }

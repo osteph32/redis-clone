@@ -33,5 +33,17 @@ Command Parser::parse(const std::string& input) {
         return {CommandType::EXPIRE, {tokens[1], tokens[2]}};
     }
 
+    if (cmd == "EXISTS" && tokens.size() >= 2) {
+        return {CommandType::EXISTS, {tokens[1]}};
+    }
+
+    if (cmd == "KEYS") {
+        return {CommandType::KEYS, {}};
+    }
+
+    if (cmd == "PING") {
+        return {CommandType::PING, {}};
+    }
+
     return {CommandType::INVALID, {}};
 }
