@@ -7,6 +7,23 @@ Database::Database() {
     loadFromDisk();
 }
 
+bool Database::isExpired(const std::string& key) {
+    auto it = expirations.find(key);
+
+    if (it == expirations.end()) {
+        return false;
+    }
+
+    if (std::chrono::system_clock::now() >= it->second) {
+        store.erase(key);
+        expirations.erase(key);
+        saveToDisk();
+        return true;
+    }
+
+    return false;
+}
+
 std::string Database::execute(const Command& cmd) {
     switch (cmd.type) {
         case CommandType::SET: {
@@ -16,6 +33,10 @@ std::string Database::execute(const Command& cmd) {
         }
 
         case CommandType::GET: {
+            if (isExpired(cmd.args[0])) {
+                return "(nil)\n";
+            }
+
             auto it = store.find(cmd.args[0]);
             if (it != store.end()) {
                 return it->second + "\n";
@@ -25,8 +46,19 @@ std::string Database::execute(const Command& cmd) {
 
         case CommandType::DEL: {
             size_t erased = store.erase(cmd.args[0]);
+            expirations.erase(cmd.args[0]);
             saveToDisk();
             return erased ? "OK\n" : "(nil)\n";
+        }
+
+        case CommandType::EXPIRE: {
+            int seconds = std::stoi(cmd.args[1]);
+
+            expirations[cmd.args[0]] =
+                std::chrono::system_clock::now() +
+                std::chrono::seconds(seconds);
+
+            return "OK\n";
         }
 
         default:

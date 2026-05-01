@@ -7,6 +7,7 @@ enum class CommandType {
     SET,
     GET,
     DEL,
+    EXPIRE,
     INVALID
 };
 

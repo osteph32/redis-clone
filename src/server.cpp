@@ -37,6 +37,11 @@ void Server::start() {
         }
 
         std::string input(buffer);
+
+        while (!input.empty() && (input.back() == '\n' || input.back() == '\r')) {
+            input.pop_back();
+        }
+
         Command cmd = Parser::parse(input);
         std::string response = db.execute(cmd);
 
