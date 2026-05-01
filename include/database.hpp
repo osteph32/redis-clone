@@ -11,4 +11,7 @@ public:
 
 private:
     std::unordered_map<std::string, std::string> store;
+
+    void saveToDisk();
+    void loadFromDisk();
 };

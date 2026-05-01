@@ -1,7 +1,13 @@
 #pragma once
 
+#include "database.hpp"
+
 class Server {
 public:
-    Server();
+    explicit Server(int port);
     void start();
+
+private:
+    int port;
+    Database db;
 };
